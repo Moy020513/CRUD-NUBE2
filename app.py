@@ -25,6 +25,8 @@ class Jugador(db.Model):
     Edad_en_años = db.Column(db.Integer, nullable=False)
     Equipo = db.Column(db.String(50), nullable=False)
 
+with app.app_context():
+    db.create_all()
 # Usuarios predefinidos EN MEMORIA (solo admin ahora)
 USUARIOS = {
     "admin": {

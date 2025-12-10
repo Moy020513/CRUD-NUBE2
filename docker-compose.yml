@@ -1,0 +1,37 @@
+services:
+  app:
+    image: crudjugador:1.4.0 
+    ports:
+      - "5003:5000"
+    environment:
+      DATABASE_URL: postgresql://postgres:5de8619a2f@db:5432/crud
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_PASSWORD: 5de8619a2f
+      POSTGRES_DB: crud
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d crud"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+
+volumes:
+  postgres_data:
