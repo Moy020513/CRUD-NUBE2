@@ -1,0 +1,27 @@
+name: Tag on PR Merge
+
+on:
+  pull_request:
+    types:
+      - closed
+    branches:
+      - dev
+
+permissions:
+  contents: write
+
+jobs:
+  tag_on_merge:
+    if: github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'dev'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Create and push tag
+        env:
+          GITHUB_TOKEN: ${{ secrets.CRUD_NUBE2 }}
+        run: |
+          TAG_NAME="${{ github.event.pull_request.title }}"
+          git tag "$TAG_NAME"
+          git push origin "$TAG_NAME"
